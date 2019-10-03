@@ -6,7 +6,7 @@
 /*   By: squinc <squinc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/28 16:18:01 by squinc            #+#    #+#             */
-/*   Updated: 2019/10/02 18:13:25 by squinc           ###   ########.fr       */
+/*   Updated: 2019/10/03 17:33:37 by squinc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,10 @@ char        **shift(char ***parts, int num, t_size min, t_size *max)
     max[num].x = 0;
     max[num].y = 0;
     i = 0;
-    while (i++ < 4)
+    while (i < 4)
     {
         j = 0;
-        while (j++ < 4)
+        while (j < 4)
         {
             if (parts[num][i][j] == '#')
                 {
@@ -33,7 +33,9 @@ char        **shift(char ***parts, int num, t_size min, t_size *max)
                     max[num].y = (i - min.y > max[num].y) ? i - min.y : max[num].y;
                     parts[num][i - min.y][j - min.x] = '#';
                 }
+                ++j;
         }
+        ++i;
     }
     return(parts[num]);
 }
@@ -49,17 +51,19 @@ char        **get_pos(char *buf, char ***parts, int num, t_size *max)
     min.y = 4;
     buf[20] = '\0';
     parts[num] = ft_strsplit(buf, '\n');
-    while (i++ < 4)
+    while (i < 4)
     {
         j = 0;
-        while (j++ < 4)
+        while (j < 4)
         {
             if (parts[num][i][j] == '#')
                 {
                     min.y = (i < min.y) ? i : min.y;
                     min.x = (j < min.x) ? j : min.x;
                 }
+                ++j;
         }
+        ++i;
     }
     parts[num] = shift(parts, num, min, max);
     return (parts[num]);
@@ -82,11 +86,11 @@ static int  check_tetr(char *buf)
             n = i;
             if ((i - 1) >= 0 && buf[i - 1] == '#')
                 ++grid;
-            else if ((i - 5) >= 0 && buf[i - 5] == '#')
+            if ((i - 5) >= 0 && buf[i - 5] == '#')
                 ++grid;
-            else if ((i + 1) < 20 && buf[i + 1] == '#')
+            if ((i + 1) < 20 && buf[i + 1] == '#')
                 ++grid;
-            else if ((i + 5) < 20 && buf[i + 5] == '#')
+            if ((i + 5) < 20 && buf[i + 5] == '#')
                 ++grid;
         }
         ++i;
@@ -128,6 +132,7 @@ int             read_file(char *name, char ***parts, t_size *max, int k)
     char    *buf;
     int     num;
 
+  
     buf = ft_strnew(21);
     fd = open(name, O_RDWR);
     if (fd < 0)
@@ -144,7 +149,7 @@ int             read_file(char *name, char ***parts, t_size *max, int k)
             parts[num] = get_pos(buf, parts, num, max);
         ++num;
     }
-    ft_memdel((void**)buf);
+  //  ft_memdel((void**)buf);как_то пофиксить надо, пока хз
     close(fd);
     return (num);
 }
