@@ -6,7 +6,7 @@
 /*   By: squinc <squinc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/03 17:31:40 by squinc            #+#    #+#             */
-/*   Updated: 2019/10/03 17:33:49 by squinc           ###   ########.fr       */
+/*   Updated: 2019/10/08 20:54:40 by squinc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,10 @@ int get_height(char **part)
     int height;
     
     i = 0;
-    j = 0;
     height = 0;
     while (part[i])
     {
+        j = 0;
         while (part[i][j])
         {
             if (part[i][j] == '#' && i > height)
@@ -31,7 +31,7 @@ int get_height(char **part)
         }
         i++;
     }
-    return (height);
+    return (height + 1);
 }
 
 int get_width(char **part)
@@ -41,10 +41,10 @@ int get_width(char **part)
     int width;
     
     i = 0;
-    j = 0;
     width = 0;
     while (part[i])
     {
+        j = 0;
         while (part[i][j])
         {
             if (part[i][j] == '#' && j > width)
@@ -53,7 +53,7 @@ int get_width(char **part)
         }
         i++;
     }
-    return (width);
+    return (width + 1);
 }
 
 char get_letter(char **map)
@@ -63,22 +63,24 @@ char get_letter(char **map)
     char let;
     
     i = 0;
-    j = 0;
-    let = 'A';
+    let = 'A' - 1;
     while (map[i])
     {
+        j = 0;
         while (map[i][j])
         {
             if (map[i][j] >= 'A' && map[i][j] <= 'Z' && map[i][j] > let)
-                let = map[i][j];
+                {
+                    let = map[i][j];
+                }
             j++;
         }
         i++;
     }
-    return (let);
+    return (let + 1);
 }
 
-int get_size(char **map)
+int get_n(char **map)
 {
     int i;
     
@@ -95,5 +97,5 @@ int get_nearest_square(int num)
     i = 0;
     while ((i * i) < num)
         i++;
-    return (i * i);
+    return (i);
 }

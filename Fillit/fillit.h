@@ -29,7 +29,7 @@ void				*ft_memset(void *dest, int c, size_t n);
 void				remove_tetr(char **part, char **map, int i, int j);
 void				paste_tetr(char **part, char **map, int i, int j);
 int					is_safe(char **part, char **map, int i, int j);
-int					dance_like_sudoku(char ***parts, char **map);
+int					dance_like_sudoku(char ***parts, char **map, int i);
 int					get_height(char **part);
 int					get_width(char **part);
 char				get_letter(char **map);
@@ -37,6 +37,6 @@ int					get_n(char **map);
 int					get_nearest_square(int num);
 char				**make_map(int size);
 void				print_map(char **map);
-int					solver(char ***parts, int size);
+int					solver(char ***parts, int size, int n);
 
 #endif

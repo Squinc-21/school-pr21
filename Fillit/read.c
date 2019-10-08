@@ -6,12 +6,12 @@
 /*   By: squinc <squinc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/28 16:18:01 by squinc            #+#    #+#             */
-/*   Updated: 2019/10/03 17:33:37 by squinc           ###   ########.fr       */
+/*   Updated: 2019/10/08 20:55:18 by squinc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fillit.h"
-
+#include <stdio.h>
 
 char        **shift(char ***parts, int num, t_size min, t_size *max)
 {
@@ -29,8 +29,8 @@ char        **shift(char ***parts, int num, t_size min, t_size *max)
             if (parts[num][i][j] == '#')
                 {
                     parts[num][i][j] = '.';
-                    max[num].x = (j - min.x > max[num].x) ? j - min.x : max[num].x;
-                    max[num].y = (i - min.y > max[num].y) ? i - min.y : max[num].y;
+                    max[num].x = (j - min.x > max[num].x) ? j - min.x + 1 : max[num].x;
+                    max[num].y = (i - min.y > max[num].y) ? i - min.y + 1 : max[num].y;
                     parts[num][i - min.y][j - min.x] = '#';
                 }
                 ++j;
@@ -149,7 +149,6 @@ int             read_file(char *name, char ***parts, t_size *max, int k)
             parts[num] = get_pos(buf, parts, num, max);
         ++num;
     }
-  //  ft_memdel((void**)buf);как_то пофиксить надо, пока хз
     close(fd);
     return (num);
 }

@@ -6,7 +6,7 @@
 /*   By: squinc <squinc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/28 16:42:15 by squinc            #+#    #+#             */
-/*   Updated: 2019/10/03 17:33:41 by squinc           ###   ########.fr       */
+/*   Updated: 2019/10/08 20:54:43 by squinc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,6 @@ int main(int argc, char **argv)
 {
     int i;
     int n;
-    int j;
     static char     ***parts;
     static t_size   max[26];
 
@@ -55,23 +54,16 @@ int main(int argc, char **argv)
         parts = NULL;
         parts = init_mas(parts);
         if (!(n = read_file(argv[1], parts, max, 0)))  
-            ft_putstr("error");
+            {
+                ft_putstr("error");
+                return (1);
+            }
         else
         {
-            while(i < n)
-            {
-                j = 0;
-                while (j < 4)
-                {
-                    ft_putstr(parts[i][j]);
-                    ft_putchar('\n');
-                    ++j;
-                }
-                ++i;
-            }
+             solver(parts, get_nearest_square(n * 3), n);
         }
-        
+         
     }
     return (0);
 }
-//gcc -Wextra -Wall -Werror main.c memory.c read.c ft_bzero.c ft_memdel.c ft_putstr.c ft_strnew.c ft_strsplit.c ft_putchar.c ft_memset.c
+//gcc -Wextra -Wall -Werror -g main.c memory.c read.c ft_bzero.c ft_memdel.c ft_putstr.c ft_strnew.c ft_strsplit.c ft_putchar.c ft_memset.c fill_map.c getters.c solver.c
