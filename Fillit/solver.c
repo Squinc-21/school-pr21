@@ -6,7 +6,7 @@
 /*   By: squinc <squinc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/03 17:32:14 by squinc            #+#    #+#             */
-/*   Updated: 2019/10/08 20:54:41 by squinc           ###   ########.fr       */
+/*   Updated: 2019/10/09 16:40:52 by squinc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,12 @@ char **make_map(int size)
     char **map;
     
     i = 0;
-    if (!(map = (char **)malloc(sizeof(char *) * (size ))))
+    if (!(map = (char **)malloc(sizeof(char *) * (size + 1))))
         return (NULL);
     while (i < size)
     {
         j = 0;
-        if (!(map[i] = (char *)malloc(sizeof(char) * (size ))))
+        if (!(map[i] = (char *)malloc(sizeof(char) * (size + 1))))
         {
             to_free(map);
             return (NULL);
@@ -77,15 +77,29 @@ char ***ex_change(char*** parts, int n)
 int solver(char ***parts, int size, int n)
 {
     char **map;
+    int flag;
     int i;
+    int j;
 
     i = 0;
     if (!(map = make_map(size)))
         return (0);
-    if (!(dance_like_sudoku(parts, map, i)))
+    while (i < size)
     {
-        //parts = ex_change(parts, n);
-        //solver(parts, size, n); //vot zdes modernisorovat
+        j = 0;
+        while (j  < size)
+        {
+            flag = dance_like_sudoku(parts, map, i, j);
+            if (flag == 1)
+                break ;
+            j++;
+        }
+        to_free(map);
+        map = make_map(size);
+        i++;
+    }
+    if (flag != 1)
+    {
         to_free(map);
         solver(parts, size + 1, n);
     }

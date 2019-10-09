@@ -6,7 +6,7 @@
 /*   By: squinc <squinc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/03 17:30:42 by squinc            #+#    #+#             */
-/*   Updated: 2019/10/08 20:54:39 by squinc           ###   ########.fr       */
+/*   Updated: 2019/10/09 16:40:56 by squinc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,10 +75,11 @@ int is_safe(char **part, char **map, int i, int j)
     return (1);
 }
 
-int dance_like_sudoku(char ***parts, char **map, int i)
+int dance_like_sudoku(char ***parts, char **map, int i, int j)
 {
-    int j;
+    int n;
 
+    n = get_n(map);
     if (!*parts)
         return (1);
     while (map[i])
@@ -89,12 +90,16 @@ int dance_like_sudoku(char ***parts, char **map, int i)
             if (is_safe(*parts, map, i, j)) 
             {
                 print_map(map);
-                if (dance_like_sudoku(++parts, map, i))
+                if (dance_like_sudoku(++parts, map, 0, 0))
                     return (1);
                 else
                     {
                         remove_tetr(*parts, map, i, j);
-                        dance_like_sudoku(parts, map, j + 1);//от следующей клетки
+                        //if (j < n)
+                        //    dance_like_sudoku(parts, map, i, j + 1);
+                        //else 
+                         //   dance_like_sudoku(parts,map, i + 1, 0);
+                        //от следующей клетки
                         //сдвинуть фигуру в массиве в конец
                         //подставить следующую фигуру 
                     }
