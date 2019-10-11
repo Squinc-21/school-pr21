@@ -6,7 +6,7 @@
 /*   By: squinc <squinc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/03 17:31:40 by squinc            #+#    #+#             */
-/*   Updated: 2019/10/09 16:40:51 by squinc           ###   ########.fr       */
+/*   Updated: 2019/10/11 19:47:57 by squinc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@ int get_height(char **part)
     
     i = 0;
     height = 0;
+    if (!part)
+        return(0);
     while (part[i])
     {
         j = 0;
@@ -42,6 +44,8 @@ int get_width(char **part)
     
     i = 0;
     width = 0;
+    if (!part)
+        return(0);
     while (part[i])
     {
         j = 0;

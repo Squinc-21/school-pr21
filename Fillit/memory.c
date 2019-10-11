@@ -6,7 +6,7 @@
 /*   By: squinc <squinc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/02 15:58:26 by squinc            #+#    #+#             */
-/*   Updated: 2019/10/09 16:40:54 by squinc           ###   ########.fr       */
+/*   Updated: 2019/10/11 19:47:58 by squinc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,25 +14,51 @@
 
 void		to_free(char **s)
 {
+	int i;
+
+	i = 0;
+	while(s[i])
+	{
+		free(s[i]);
+		s[i] = NULL;
+		++i;
+	}
     free(s);
+	s = NULL;
 }
 
-void free_all(char *buf, char ***parts, int k)
+int free_all(char *buf, char ***parts)
 {
+	int k;
+
+	k = 0;
  	ft_memdel((void**)&buf);
-    while (k < 26)
+    while (parts[k])
 		{
 			to_free(parts[k]);
 			++k;
 		}
     free(parts);
 	parts = NULL;
+	return (1);
 }
-	//int	i;
 
-	//i = 0;
-	//while (s[i])
-      //      {
-		//		free(s[i]);
-		//		++i;
-		//	}
+void free_alls(char ***parts)
+{
+	int k;
+
+	k = 0;
+	while (parts[k])
+	{
+		to_free(parts[k]);
+		++k;
+	}
+	while (k < 26)
+	{
+		free(parts[k]);
+		++k;
+	}
+	*parts = NULL;
+    free(parts);
+	parts = NULL;
+}

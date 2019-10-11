@@ -14,8 +14,9 @@ typedef struct		s_size
 	int y;
 }					t_size;
 
-int					read_file(char *name, char ***parts, t_size *max, int k);
-void				free_all(char *buf, char ***parts, int k);
+int					read_file(char *name, char ***parts);
+int					free_all(char *buf, char ***parts);
+void				free_alls(char ***parts);
 void				to_free(char **s);
 ////
 char                **ft_strsplit(char const *s, char c);
@@ -37,6 +38,6 @@ int					get_n(char **map);
 int					get_nearest_square(int num);
 char				**make_map(int size);
 void				print_map(char **map);
-int					solver(char ***parts, int size, int n);
+int					solver(char ***parts, int size);
 
 #endif

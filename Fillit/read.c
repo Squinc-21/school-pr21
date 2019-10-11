@@ -6,20 +6,18 @@
 /*   By: squinc <squinc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/28 16:18:01 by squinc            #+#    #+#             */
-/*   Updated: 2019/10/09 16:40:49 by squinc           ###   ########.fr       */
+/*   Updated: 2019/10/11 19:47:59 by squinc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fillit.h"
 #include <stdio.h>
 
-char        **shift(char ***parts, int num, t_size min, t_size *max)
+char        **shift(char ***parts, int num, t_size min)
 {
     int i;
     int j;
 
-    max[num].x = 0;
-    max[num].y = 0;
     i = 0;
     while (i < 4)
     {
@@ -29,8 +27,6 @@ char        **shift(char ***parts, int num, t_size min, t_size *max)
             if (parts[num][i][j] == '#')
                 {
                     parts[num][i][j] = '.';
-                    max[num].x = (j - min.x > max[num].x) ? j - min.x + 1 : max[num].x;
-                    max[num].y = (i - min.y > max[num].y) ? i - min.y + 1 : max[num].y;
                     parts[num][i - min.y][j - min.x] = '#';
                 }
                 ++j;
@@ -40,7 +36,7 @@ char        **shift(char ***parts, int num, t_size min, t_size *max)
     return(parts[num]);
 }
 
-char        **get_pos(char *buf, char ***parts, int num, t_size *max)
+char        **get_pos(char *buf, char ***parts, int num)
 {
     int i;
     int j;
@@ -65,7 +61,7 @@ char        **get_pos(char *buf, char ***parts, int num, t_size *max)
         }
         ++i;
     }
-    parts[num] = shift(parts, num, min, max);
+    parts[num] = shift(parts, num, min);
     return (parts[num]);
 }
 
@@ -118,14 +114,14 @@ static int  check(char *buf, int count)
             return (3);
         ++i;
     }
-    if (count == 21 && buf[20] != '\n')
+    if (grid != 4 || (count == 21 && buf[20] != '\n'))
         return (4);
     if (!(check_tetr(buf)))
         return (5);
     return(0);
 }
 
-int             read_file(char *name, char ***parts, t_size *max, int k)
+int             read_file(char *name, char ***parts)
 {
     int     fd;
     int     n;
@@ -134,21 +130,22 @@ int             read_file(char *name, char ***parts, t_size *max, int k)
 
   
     buf = ft_strnew(21);
-    fd = open(name, O_RDWR);
-    if (fd < 0)
+    if ((fd = open(name, O_RDWR)) < 0)
         return(0);
     num = 0;
     while ((n = read(fd, buf, BUFF_SIZE)) >= 20)
     {
-        if (check(buf, n) != 0)
-            {
-                free_all(buf, parts, k);  
+        if (check(buf, n) != 0 && free_all(buf, parts)) 
                 return(0);
-            }
         else
-            parts[num] = get_pos(buf, parts, num, max);
-        ++num;
+            {
+                parts[num] = get_pos(buf, parts, num);
+                buf[20] = (n == 21) ? '.' : buf[20];
+            }
+            ++num;
     }
+    if ((n != 0 && n < 20) || buf[20] == '.')
+        return(0);
     close(fd);
     return (num);
 }

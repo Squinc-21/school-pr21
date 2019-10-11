@@ -6,7 +6,7 @@
 /*   By: squinc <squinc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/03 17:32:14 by squinc            #+#    #+#             */
-/*   Updated: 2019/10/09 16:40:52 by squinc           ###   ########.fr       */
+/*   Updated: 2019/10/11 19:47:55 by squinc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,6 @@ char **make_map(int size)
         i++;
     }
     map[i] = NULL;
-    printf("%d   size\n", size);
     return (map);
 }
 
@@ -54,59 +53,44 @@ void print_map(char **map)
         ft_putstr("\n");
         i++;
     }
-    ft_putchar('\n');
 }
 
-char ***ex_change(char*** parts, int n)
+char **reset_map(char **map)
 {
-    int     i;
-    char    **c;
-
-    i = 0;
-    c = *parts;
-    while (i < n)
-    {
-        *parts = *(parts + 1);
-        ++parts;
-        ++i;
-    }
-    parts[n] = c;
-    return (parts);
-}
-
-int solver(char ***parts, int size, int n)
-{
-    char **map;
-    int flag;
     int i;
     int j;
 
     i = 0;
-    if (!(map = make_map(size)))
-        return (0);
-    while (i < size)
+    while (map[i])
     {
         j = 0;
-        while (j  < size)
+        while (map[i][j])
         {
-            flag = dance_like_sudoku(parts, map, i, j);
-            if (flag == 1)
-                break ;
+            map[i][j] = '.';
             j++;
         }
-        to_free(map);
-        map = make_map(size);
         i++;
     }
-    if (flag != 1)
+    return (map);
+}
+
+int solver(char ***parts, int size)
+{
+    char **map;
+    
+    if (!(map = make_map(size)))
+        return (0);
+    if (!dance_like_sudoku(parts, map, 0, 0))
     {
         to_free(map);
-        solver(parts, size + 1, n);
+        solver(parts, size + 1);
     }
     else
     {
         print_map(map);
         to_free(map);
+        map = NULL;
+        free_alls(parts);
     }
     return (1);
 }

@@ -6,23 +6,25 @@
 /*   By: squinc <squinc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/03 17:30:42 by squinc            #+#    #+#             */
-/*   Updated: 2019/10/09 16:40:56 by squinc           ###   ########.fr       */
+/*   Updated: 2019/10/11 19:47:56 by squinc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fillit.h"
+#include <stdio.h>
 
 void remove_tetr(char **part, char **map, int i, int j)
 {
     int row;
     int col;
+
     row = 0;
-    col = 0;
     while (part[row])
     {
-        while (part[row][col])
+        col = 0;
+        while (part[row][col] && i + row < get_n(map)  && j + col < get_n(map))
         {
-            if (map[i + row][j + col] != '.' && part[row][col] != '.')
+            if (map[i + row][j + col] != '.' && part[row][col] == '#')
                 map[i + row][j + col] = '.';
             col++;
         }
@@ -77,35 +79,22 @@ int is_safe(char **part, char **map, int i, int j)
 
 int dance_like_sudoku(char ***parts, char **map, int i, int j)
 {
-    int n;
-
-    n = get_n(map);
-    if (!*parts)
+    if(!*(parts + 1))
         return (1);
     while (map[i])
     {
-        j = 0;
         while (map[i][j])
         {
             if (is_safe(*parts, map, i, j)) 
             {
-                print_map(map);
-                if (dance_like_sudoku(++parts, map, 0, 0))
+                if (dance_like_sudoku((parts + 1), map, 0, 0))
                     return (1);
                 else
-                    {
-                        remove_tetr(*parts, map, i, j);
-                        //if (j < n)
-                        //    dance_like_sudoku(parts, map, i, j + 1);
-                        //else 
-                         //   dance_like_sudoku(parts,map, i + 1, 0);
-                        //от следующей клетки
-                        //сдвинуть фигуру в массиве в конец
-                        //подставить следующую фигуру 
-                    }
+                    remove_tetr(*parts, map, i, j);
             }
             j++;
         }
+        j = 0;
         i++;
     }
     return (0);
