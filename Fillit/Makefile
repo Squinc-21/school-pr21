@@ -1,12 +1,12 @@
-# **************************************************************************** #
+ # **************************************************************************** #
 #                                                                              #
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: squinc <squinc@student.42.fr>              +#+  +:+       +#+         #
+#    By: lsedgeki <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/09/07 16:35:23 by lsedgeki          #+#    #+#              #
-#    Updated: 2019/10/09 22:15:21 by squinc           ###   ########.fr        #
+#    Updated: 2019/09/07 16:40:59 by lsedgeki         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,10 +16,15 @@ SRCS = *.c
 
 INCLUDES=./
 
+OBJ = *.o
+
 all: $(NAME)
 
-$(NAME):
-	@gcc -Wall -Wextra -Werror $(SRCS) -I $(INCLUDES) -o $(NAME)
+$(NAME): $(OBJ)
+	@gcc -Wall -Wextra -Werror $(OBJ) -o $(NAME)
+
+$(OBJ):
+	@gcc -Wall -Wextra -Werror -c $(SRCS) -I $(INCLUDES)
 
 clean:
 	@/bin/rm -f *.o
