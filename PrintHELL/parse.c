@@ -6,13 +6,13 @@
 /*   By: squinc <squinc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 17:07:45 by squinc            #+#    #+#             */
-/*   Updated: 2019/10/29 18:57:10 by squinc           ###   ########.fr       */
+/*   Updated: 2019/11/02 21:24:49 by squinc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-void	parse_flags(t_printf *st)
+static void	parse_flags(t_printf *st)
 {
 	if (*st->source == '-')
 		st->l_align = 1;
@@ -26,7 +26,7 @@ void	parse_flags(t_printf *st)
 		st->prefix = 1;
 }
 
-void	parse_length_flags(t_printf *st)
+static void	parse_length_flags(t_printf *st)
 {
 	if (*st->source == 'h' && *(st + 1)->source == 'h')
 	{
@@ -44,16 +44,15 @@ void	parse_length_flags(t_printf *st)
 		st->size = (*st->source == 'l') ? 3 : st->size;
 		st->size = (*st->source == 'L') ? 5 : st->size;
 	}
-	return (st);
 }
 
-void	ft_parse(t_printf *st, char *buf)
+static void	ft_parse(t_printf *st, char *buf)
 {
 	while (!is_conv(*st->source))
 	{
 		if (*st->source == '%')
 		{	
-			buf = '%';
+			*buf = '%';
 			buf++;		
 			return  ;
 		}
@@ -64,6 +63,7 @@ void	ft_parse(t_printf *st, char *buf)
 			st->width = ft_atoi(*st->source);
 			while(is_digit(*st->source))
 				st->source++;
+			st->source--;
 		}
 		else if (*st->source == '.')
 		{
@@ -72,6 +72,7 @@ void	ft_parse(t_printf *st, char *buf)
 					st->precision = ft_atoi(*st->source);
 					while(is_digit(*st->source))
 						st->source++;
+					st->source--;
 				}
 			else
 				st->precision = 0;
@@ -80,13 +81,103 @@ void	ft_parse(t_printf *st, char *buf)
 			parse_length_flags(st);
 		st->source++;	
 	}
-	//обращение к va_arg s uchetom length_flag	
+	
 }
 
-void		int_to_buf(t_printf *st)
+static void		define_conv(t_printf *st)
 {
-	int a;
+	if (*st->source == 'd' || *st->source == 'i')
+		cr_int(st, st->buf);
+}
 
-	a = va_arg(st->ap, int);
-	ft_putnbr(a);
+static void		cr_int(t_printf *st, char *str)
+{
+	char *s;
+	
+	if (st->size == 1)
+	{
+		str = pf_itoa(va_arg(st->ap, signed char), st);
+		
+	}
+	else if (st->size == 2)
+		str = pf_itoa(va_arg(st->ap, short int), st);
+	else if (st->size == 3)
+		str = pf_itoa(va_arg(st->ap, long int), st);
+	else if (st->size == 4)
+		str = pf_itoa(va_arg(st->ap, long long int), st);
+	else
+		str = pf_itoa(va_arg(st->ap, int), st);
+}
+
+void			cr_output(t_printf *st)
+{
+	int sp;
+	int zero;
+	
+	sp = 0;
+	zero = 0;
+	if (st->space_sign && !st->plus_sign)
+		sp = 1;
+	if (st->width > st->buf_len)
+		sp = st->width - st->buf_len;
+	if (st->fill_zero && st->precision < 0 && !st->l_align)
+		zero = sp;
+	if (st->plus_sign)
+	{
+		sp = (sp > 0) ? sp - 1 : 0;
+		zero = (zero > 0) ? zero - 1 : 0;
+	}
+	print_str(st, sp, zero);
+}
+
+void			print_str(t_printf *st, int sp, int zero)
+{
+	if (st->plus_sign)
+	{
+		if (zero > 0)
+		{
+			write(1, "+", 1);
+			print_cycle(sp, zero, '0');
+		}
+		else
+		{
+			print_cycle(sp, zero, ' ');
+			write(1, "+", 1);
+		}
+	}
+	else if (st->l_align)
+	{
+		ft_putstr(st->buf);
+		print_cycle(sp, zero, ' ');
+	}
+	else
+	{
+		if (sp == 1)
+			write(1, " ", 1);
+		else if (zero > 0)
+			print_cycle(sp, zero, '0');
+		else if (sp > 0)
+			print_cycle(sp, zero, ' ');
+		ft_putstr(st->buf);
+	}
+}
+
+void			print_cycle(int sp, int zero, char c)
+{
+	if (c == ' ')
+	{
+		while (sp > 0)
+		{
+			write(1, &c, 1);
+			sp--;
+		}
+	}
+	else
+	{
+		while (zero > 0)
+		{
+			write(1, &c, 1);
+			zero--;	
+		}
+	}
 }

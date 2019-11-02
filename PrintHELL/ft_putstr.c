@@ -1,37 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_printf.c                                        :+:      :+:    :+:   */
+/*   ft_putstr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: squinc <squinc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/10/25 16:28:27 by squinc            #+#    #+#             */
-/*   Updated: 2019/11/02 19:10:23 by squinc           ###   ########.fr       */
+/*   Created: 2019/09/11 15:58:39 by squinc            #+#    #+#             */
+/*   Updated: 2019/11/02 21:22:12 by squinc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-int	ft_printf(const char *format, ...)
+static void ft_putchar(char c)
 {
-	t_printf st;
+	write(1, &c, 1);
+}
 
-	st.fd = 1;
-	st.source = (char*)format;
-	va_start(st.ap, format);
-	while (*st.source)
+void	ft_putstr(char *s)
+{
+	size_t	i;
+
+	i = 0;
+	if (s != NULL)
 	{
-		if (*st.source == '%')
-		{
-			++st.source;
-			if (!*st.source)
-				break ;
-			ft_parse(&st, st.buf);
-		}
-		else
-			//write to_buf(&st);
-		++st.source;
+		while (s[i] != '\0')
+			ft_putchar(s[i++]);
 	}
-	st.t_len = 0;
-	return (st.t_len);
 }
