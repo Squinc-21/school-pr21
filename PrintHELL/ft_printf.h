@@ -14,7 +14,7 @@ typedef struct  s_printf
 	va_list 	ap;
 
 	char 		*source;
-	char		buf[100];
+	char		*buf;
 	int			buf_len;
 	char		*out;
 	
@@ -30,19 +30,19 @@ typedef struct  s_printf
 
 int				ft_printf(const char *format, ...);
 void			ft_parse(t_printf *st, char *buf);
-
-
-
+int				ft_atoi(char *str);
+void			cr_int(t_printf *st);
 int				is_digit(char c);
 int				is_flag(char c);
 int				is_conv(char c);
 int				is_len_fl(char c);
-
+void			reset_st(t_printf *st);
 
 char			*pf_itoa(intmax_t n, t_printf *st);
 void			ft_putstr(char *s);
 void			cr_output(t_printf *st);
 void			print_str(t_printf *st, int sp, int zero);
 void			print_cycle(int sp, int zero, char c);
+void			define_conv(t_printf *st);
 
 #endif

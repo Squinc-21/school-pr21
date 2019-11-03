@@ -6,7 +6,7 @@
 /*   By: squinc <squinc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 16:28:27 by squinc            #+#    #+#             */
-/*   Updated: 2019/11/02 19:10:23 by squinc           ###   ########.fr       */
+/*   Updated: 2019/11/03 19:22:51 by squinc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,11 +26,15 @@ int	ft_printf(const char *format, ...)
 			++st.source;
 			if (!*st.source)
 				break ;
+			reset_st(&st);
 			ft_parse(&st, st.buf);
+			++st.source;
 		}
 		else
-			//write to_buf(&st);
-		++st.source;
+		{
+			write(1, st.source, 1);
+			++st.source;
+		}
 	}
 	st.t_len = 0;
 	return (st.t_len);

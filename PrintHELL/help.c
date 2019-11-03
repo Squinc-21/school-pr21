@@ -6,7 +6,7 @@
 /*   By: squinc <squinc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/28 21:44:59 by squinc            #+#    #+#             */
-/*   Updated: 2019/10/29 18:35:59 by squinc           ###   ########.fr       */
+/*   Updated: 2019/11/03 19:25:08 by squinc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,14 @@
 
 void reset_st(t_printf *st)
 {
+	//free(st->buf);
 	st->fill_zero = 0;
 	st->prefix = 0;
 	st->width = 0;
+	st->l_align = 0;
 	st->plus_sign = 0;
 	st->space_sign = 0;
+	st->size = 0;
 	st->precision = -1; //important
 }
 
@@ -50,8 +53,8 @@ int is_conv(char c)
 int is_len_fl(char c)
 {
 	return (c == 'l' ||
-			c == 'll' ||
+		    //c == 'll' ||
 			c == 'L' ||
-			c == 'h' ||
-			c == 'hh');
+			c == 'h');
+			/*c == 'hh'*/
 }
