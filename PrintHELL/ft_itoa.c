@@ -6,7 +6,7 @@
 /*   By: squinc <squinc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/10 18:49:51 by squinc            #+#    #+#             */
-/*   Updated: 2019/11/03 20:30:17 by squinc           ###   ########.fr       */
+/*   Updated: 2019/11/04 19:36:39 by squinc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ static int	len_uw(uintmax_t n, int base)
 	return (len);
 }
 
-static char				*ft_itoa(intmax_t n, int len)
+char				*ft_itoa(intmax_t n, int len)
 {
 	char	*c;
 	int		sign;
@@ -65,26 +65,28 @@ static char				*ft_itoa(intmax_t n, int len)
 	return (c);
 }
 
-static char		*ft_uitoa(uintmax_t n, int len, int base)
+char		*ft_uitoa(uintmax_t n, int len, int base, t_printf *st)
 {
-	char	*c;
 	char	*hex;
 	char	*hexb;
 
 	hex = "0123456789abcdef";
 	hexb = "0123456789ABCDEF";
-	c = (char*)malloc(sizeof(char) * len + 1);
-	if (c == NULL)
+	st->prefix = (n == 0) ? 0 : st->prefix;
+	if (*st->source == 'X')
+		hex = hexb;
+	st->buf = (char*)malloc(sizeof(char) * len + 1);
+	if (st->buf == NULL)
 		return (NULL);
-	c[len] = '\0';
+	st->buf[len] = '\0';
 	--len;
 	while (len >= 0)
 	{
-		c[len] = hex[n % base];
+		st->buf[len] = hex[n % base];
 		n = n / base;
 		--len;
 	}
-	return (c);
+	return (st->buf);
 }
 
 char		*pf_itoa(intmax_t n, t_printf *st)
@@ -124,5 +126,12 @@ char		*pf_uitoa(uintmax_t n, t_printf *st, int base)
 			len = len_uw(n, base);
 	}
 	st->buf_len = len;
-	return (ft_uitoa(n, len, base));
+	if (st->prefix && st->fill_zero)
+	{
+		if (*st->source == 'o')
+			len--;
+		else
+			len -= 2;
+	}
+	return (ft_uitoa(n, len, base, st));
 }

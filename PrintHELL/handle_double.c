@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_double.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lsedgeki <lsedgeki@student.42.fr>          +#+  +:+       +#+        */
+/*   By: squinc <squinc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/03 13:15:26 by lsedgeki          #+#    #+#             */
-/*   Updated: 2019/11/03 20:20:58 by lsedgeki         ###   ########.fr       */
+/*   Updated: 2019/11/04 19:26:33 by squinc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,17 +64,20 @@ static int	len_w(intmax_t n)
 
 char *pf_ditoa(long double num, t_printf *st)
 {
-    char *pre_dot;
-    char *post_dot;
-    intmax_t a;
-    intmax_t b;
-
-    a = (intmax_t)num;
-    if (st->precision == -1)
-        st->precision = 6;
-    b =  doub_to_int(num - a, st->precision);
-    pre_dot = ft_itoa(a, len_w(a));
-    post_dot = ft_itoa(b, len_w(b));
-    post_dot = ft_strjoin(".", post_dot);
-    return (ft_strjoin(pre_dot, post_dot));
+   char *pre_dot;
+   char *post_dot;
+   intmax_t a;
+   intmax_t b;
+   a = (intmax_t)num;
+   pre_dot = ft_itoa(a, len_w(a));
+   if (st->precision == -1)
+       st->precision = 6;
+   b = (a < 0) ? doub_to_int((-1) * (num - a), st->precision)  : doub_to_int(num - a, st->precision);
+   if (st->precision != 0)
+   {
+   post_dot = ft_itoa(b, len_w(b));
+   post_dot = ft_strjoin(".", post_dot);
+   return (ft_strjoin(pre_dot, post_dot));
+   }
+   return (pre_dot);
 }

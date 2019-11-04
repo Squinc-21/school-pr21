@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_atoi.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lsedgeki <lsedgeki@student.42.fr>          +#+  +:+       +#+        */
+/*   By: squinc <squinc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/08 13:07:17 by lsedgeki          #+#    #+#             */
-/*   Updated: 2019/11/03 20:37:51 by lsedgeki         ###   ########.fr       */
+/*   Updated: 2019/11/04 19:25:14 by squinc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ int						ft_atoi(char *str)
 	q = 0;
 	i = 0;
 	n = 1;
+	
 	while (check_tab(str[i]))
 		i++;
 	if (str[i] == '-' || str[i] == '+')
@@ -34,7 +35,7 @@ int						ft_atoi(char *str)
 		i += 1;
 		n = (str[i - 1] == '-') ? n * (-1) : n;
 	}
-	while (str[i] >= '0' && (str[i] <= '9'))
+	while (str[i] >= '0' && str[i] <= '9')
 	{
 		q = q * 10 + (str[i] - '0');
 		if (q < 0 && n == 1)

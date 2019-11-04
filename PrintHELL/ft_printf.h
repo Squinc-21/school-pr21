@@ -29,14 +29,14 @@ typedef struct  s_printf
 }				t_printf;
 
 int				ft_printf(const char *format, ...);
-void			ft_parse(t_printf *st, char *buf);
+void			ft_parse(t_printf *st);
 int				ft_atoi(char *str);
 void			cr_int(t_printf *st);
 void			cr_unsigned(t_printf *st);
 int				is_digit(char c);
 int				is_flag(char c);
 int				is_conv(char c);
-int				is_len_fl(char c);
+int				is_len_fl(char *c);
 void			reset_st(t_printf *st);
 
 char			*pf_itoa(intmax_t n, t_printf *st);
@@ -56,5 +56,12 @@ intmax_t		doub_to_int(long double num, int presicion);
 char			*pf_ditoa(long double num, t_printf *st);
 void			ft_bzero(void *s, size_t n);
 char			*ft_strnew(size_t size);
+int				ft_strncmp(char *s1, char *s2, size_t n);
+int				form_pref(t_printf *st, int sp);
+void            handle_sym(t_printf *st);
+char            *ft_strcpy(char *dest, const char *src);
+char			*ft_uitoa(uintmax_t n, int len, int base, t_printf *st);
+char			*ft_itoa(intmax_t n, int len);
+char			*ft_strncpy(char *dest, const char *src, size_t n);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: squinc <squinc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 17:07:45 by squinc            #+#    #+#             */
-/*   Updated: 2019/11/03 20:29:14 by squinc           ###   ########.fr       */
+/*   Updated: 2019/11/04 22:27:58 by squinc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,15 +28,15 @@ static void	parse_flags(t_printf *st)
 
 static void	parse_length_flags(t_printf *st)
 {
-	if (*st->source == 'h' && *(st + 1)->source == 'h')
+	if (*st->source == 'h' && *(st->source + 1) == 'h')
 	{
 		st->size = 1;
 		st->source++;
 	}
-	else if (*st->source == 'l' && *(st + 1)->source == 'l')
+	else if (*st->source == 'l' && *(st->source + 1) == 'l')
 	{
 		st->size = 4;
-		st->source++;	
+		st->source++;
 	}
 	else if (*st->source == 'h' || *st->source == 'l' || *st->source == 'L')
 	{
@@ -46,14 +46,16 @@ static void	parse_length_flags(t_printf *st)
 	}
 }
 
-void	ft_parse(t_printf *st, char *buf)
+void	ft_parse(t_printf *st)
 {
 	while (!is_conv(*st->source))
 	{
 		if (*st->source == '%')
 		{	
-			*buf = '%';
-			buf++;		
+			st->buf = (char *)malloc(sizeof(char) * 1);
+            *st->buf = '%';
+            st->buf_len = ft_strlen(st->buf);
+            cr_output(st);
 			return  ;
 		}
 		else if (is_flag(*st->source))
@@ -67,9 +69,9 @@ void	ft_parse(t_printf *st, char *buf)
 		}
 		else if (*st->source == '.')
 		{
-			if (is_digit(*(++st->source)))
+			if (is_digit(*(st->source + 1)))
 				{
-					st->precision = ft_atoi(st->source);
+					st->precision = ft_atoi(++st->source);
 					while(is_digit(*st->source))
 						st->source++;
 					st->source--;
@@ -77,8 +79,8 @@ void	ft_parse(t_printf *st, char *buf)
 			else
 				st->precision = 0;
 		}
-		else if (is_len_fl(*st->source))
-			parse_length_flags(st);
+		else if (is_len_fl(st->source) == 0)
+			parse_length_flags(st);	
 		st->source++;	
 	}
 	define_conv(st);
@@ -89,11 +91,13 @@ void		define_conv(t_printf *st)
 	
 	if (*st->source == 'd' || *st->source == 'i')
 		cr_int(st);
-	if (*st->source == 'u'|| *st->source == 'o' || *st->source == 'x')
+	if (*st->source == 'u'|| *st->source == 'o' || 
+		*st->source == 'x' || *st->source == 'X')
 		cr_unsigned(st);
-	//if (*st->source == 'f' || *st->source == 'F')
-		//handle_double(st, st->buf);
-
+	if (*st->source == 'f' || *st->source == 'F')
+		handle_double(st);
+	if (*st->source == 'c' || *st->source == 's' || *st->source == 'p')
+    	handle_sym(st);
 }
 
 void		cr_unsigned(t_printf *st)
@@ -119,9 +123,7 @@ void		cr_unsigned(t_printf *st)
 void		cr_int(t_printf *st)
 {
 	if (st->size == 1)
-	{
 		st->buf = pf_itoa(va_arg(st->ap, int), st);
-	}
 	else if (st->size == 2)
 		st->buf = pf_itoa(va_arg(st->ap, int), st);
 	else if (st->size == 3)
@@ -130,6 +132,8 @@ void		cr_int(t_printf *st)
 		st->buf = pf_itoa(va_arg(st->ap, long long int), st);
 	else
 		st->buf = pf_itoa(va_arg(st->ap, int), st);
+	st->plus_sign = (st->buf[0] == '-') ? 0 : st->plus_sign;
+	
 	cr_output(st);
 }
 
@@ -143,14 +147,18 @@ void			cr_output(t_printf *st)
 	if (st->space_sign && !st->plus_sign)
 		sp = 1;
 	if (st->width > st->buf_len)
-		sp = st->width - st->buf_len;
+			sp = st->width - st->buf_len;
 	if (st->fill_zero && st->precision < 0 && !st->l_align)
-		zero = sp;
+		{
+			zero = sp;
+			
+			}
 	if (st->plus_sign && (*st->source == 'd' || *st->source == 'i'))
 	{
 		sp = (sp > 0) ? sp - 1 : 0;
 		zero = (zero > 0) ? zero - 1 : 0;
 	}
+
 	print_str(st, sp, zero);
 }
 
@@ -170,14 +178,14 @@ void			print_str(t_printf *st, int sp, int zero)
 		}
 		ft_putstr(st->buf);
 	}
-	else if (st->l_align)
+	else if (st->l_align && !st->prefix)
 	{
 		if (st->space_sign)
 			write(1," ",1);
 		ft_putstr(st->buf);
 		print_cycle(sp, zero, ' ');
 	}
-	else
+	else if (!st->prefix)
 	{
 		if (sp == 1)
 			write(1, " ", 1);
@@ -186,6 +194,32 @@ void			print_str(t_printf *st, int sp, int zero)
 		else if (sp > 0)
 			print_cycle(sp, zero, ' ');
 		ft_putstr(st->buf);
+	}
+	else
+	{
+		if (st->l_align)
+		{
+			sp = form_pref(st, sp);
+			ft_putstr(st->buf);
+			print_cycle(sp, zero, ' ');
+		}
+		else
+		{
+			if (st->fill_zero)
+			{
+				zero = form_pref(st, zero);
+				print_cycle(sp , zero , '0');
+			}
+			else
+			{
+				if (*st->source == 'o')
+					print_cycle(sp - 1, zero, ' ');
+				else
+					print_cycle(sp - 2, zero, ' ');
+				form_pref(st, sp);
+			}
+			ft_putstr(st->buf);
+		}
 	}
 }
 
@@ -207,4 +241,24 @@ void			print_cycle(int sp, int zero, char c)
 			zero--;	
 		}
 	}
+}
+
+int				form_pref(t_printf *st, int sp)
+{
+	if (*st->source == 'o')
+		{
+			write(1, "0", 1);
+			sp--;
+		}
+	if (*st->source == 'x')
+		{
+			write(1, "0x", 2);
+			sp -= 2;
+		}
+	if (*st->source == 'X')
+		{
+			write(1, "0X", 2);
+			sp -= 2;
+		}
+	return (sp);
 }
