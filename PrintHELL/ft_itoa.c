@@ -6,7 +6,7 @@
 /*   By: squinc <squinc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/10 18:49:51 by squinc            #+#    #+#             */
-/*   Updated: 2019/11/04 19:36:39 by squinc           ###   ########.fr       */
+/*   Updated: 2019/11/06 17:51:57 by squinc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,8 +94,15 @@ char		*pf_itoa(intmax_t n, t_printf *st)
 	int	len;
 
 	len = len_w(n);
+	if (!st->precision && !n)
+	{
+		st->prefix = 0;
+		return (NULL);
+	}
 	if (len < st->precision)
 		len = st->precision;
+	if (n < 0 && len == st->precision)
+		len++;
 	if (!st->l_align && st->fill_zero && st->width > len)
 	{
 		if (st->precision >= len)
@@ -105,6 +112,7 @@ char		*pf_itoa(intmax_t n, t_printf *st)
 		else
 			len = len_w(n);
 	}
+	len -= (st->plus_sign && st->fill_zero && ft_atoi(st->buf) >= 0) ? 1 : 0;
 	st->buf_len = len;
 	return (ft_itoa(n, len));
 }
@@ -113,6 +121,12 @@ char		*pf_uitoa(uintmax_t n, t_printf *st, int base)
 {
 	int	len;
 
+	if (!st->precision && !n)
+	{
+		if (base != 8)
+			st->prefix = 0;
+		return (NULL);
+	}
 	len = len_uw(n, base);
 	if (len < st->precision)
 		len = st->precision;
@@ -126,12 +140,13 @@ char		*pf_uitoa(uintmax_t n, t_printf *st, int base)
 			len = len_uw(n, base);
 	}
 	st->buf_len = len;
-	if (st->prefix && st->fill_zero)
+	if (st->prefix && st->fill_zero && !st->l_align)
 	{
 		if (*st->source == 'o')
 			len--;
 		else
 			len -= 2;
+		st->buf_len = len;
 	}
 	return (ft_uitoa(n, len, base, st));
 }

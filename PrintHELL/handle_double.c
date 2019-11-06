@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_double.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: squinc <squinc@student.42.fr>              +#+  +:+       +#+        */
+/*   By: lsedgeki <lsedgeki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/03 13:15:26 by lsedgeki          #+#    #+#             */
-/*   Updated: 2019/11/04 19:26:33 by squinc           ###   ########.fr       */
+/*   Updated: 2019/11/06 17:32:11 by lsedgeki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,30 +23,12 @@ void handle_double(t_printf *st)
     st->buf_len = (int)ft_strlen(st->buf);
     if (st->fill_zero)
     {
-        s = ft_itoa(0, (st->width - st->buf_len)); 
+        s = ft_itoa(0, (st->width - st->buf_len));
+        printf("l%sl", s); 
         st->buf = ft_strjoin(s, st->buf);
         st->buf_len = (int)ft_strlen(st->buf);
     }
     cr_output(st);
-}
-
-intmax_t doub_to_int(long double num, int presicion)
-{
-    intmax_t q;
-    int i;
-    
-    q = 0;
-    i = 0;
-    while (i < presicion)
-    {
-        num = num * 10;
-        i++;
-    }
-    if (num - (intmax_t)num > 0.5)
-        q = (intmax_t)num + 1;
-    else
-        q = (intmax_t)num;
-    return (q);
 }
 
 static int	len_w(intmax_t n)
@@ -62,22 +44,59 @@ static int	len_w(intmax_t n)
 	return (len);
 }
 
+char *doub_to_int(long double num, int presicion, char *post_dot)
+{
+    int i;
+    char *out;
+    
+    i = 0;
+    while (i < presicion && num < 1.0)
+        {
+            num = num * 10;
+            i++;
+        }
+    out = ft_itoa(0, i - 1); 
+    while (i < presicion)
+    {
+        num = num * 10;
+        i++;
+    }
+    if (num - (intmax_t)num > 0.5)
+        out = ft_strjoin(out, ft_itoa((intmax_t)num + 1, len_w((intmax_t)num + 1)));
+    else
+       out = ft_strjoin(out, ft_itoa((intmax_t)num, len_w((intmax_t)num)));
+    post_dot = out;
+    return (post_dot);
+}
+
 char *pf_ditoa(long double num, t_printf *st)
 {
    char *pre_dot;
    char *post_dot;
    intmax_t a;
-   intmax_t b;
+   
    a = (intmax_t)num;
    pre_dot = ft_itoa(a, len_w(a));
+   post_dot = "";
    if (st->precision == -1)
        st->precision = 6;
-   b = (a < 0) ? doub_to_int((-1) * (num - a), st->precision)  : doub_to_int(num - a, st->precision);
+   post_dot = (num < 0) ? doub_to_int((-1) * (num - a), st->precision, post_dot) 
+                        : doub_to_int(num - a, st->precision, post_dot);
+   if(num - a >= 0.5  )
+   {
+       a++;
+       pre_dot = ft_itoa(a, len_w(a));
+       return (pre_dot);
+   }
    if (st->precision != 0)
    {
-   post_dot = ft_itoa(b, len_w(b));
    post_dot = ft_strjoin(".", post_dot);
-   return (ft_strjoin(pre_dot, post_dot));
+   pre_dot = ft_strjoin(pre_dot, post_dot);
+   if (num < 0 && a == 0)
+       pre_dot = ft_strjoin("-", pre_dot); 
+   return (pre_dot);
    }
+   if (num < 0 && a == 0)
+       pre_dot = ft_strjoin("-", pre_dot);
    return (pre_dot);
 }

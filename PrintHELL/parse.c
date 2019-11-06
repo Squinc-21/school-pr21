@@ -6,7 +6,7 @@
 /*   By: squinc <squinc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 17:07:45 by squinc            #+#    #+#             */
-/*   Updated: 2019/11/04 22:27:58 by squinc           ###   ########.fr       */
+/*   Updated: 2019/11/06 17:37:15 by squinc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,9 +108,9 @@ void		cr_unsigned(t_printf *st)
 	base = (*st->source == 'o') ? 8 : base;
 	base = (*st->source == 'u') ? 10 : base;
 	if (st->size == 1)
-		st->buf = pf_uitoa(va_arg(st->ap, unsigned int), st, base);
+		st->buf = pf_uitoa((unsigned char)va_arg(st->ap, unsigned int), st, base);
 	else if (st->size == 2)
-		st->buf = pf_uitoa(va_arg(st->ap, unsigned int), st, base);
+		st->buf = pf_uitoa((unsigned short int)va_arg(st->ap, unsigned int), st, base);
 	else if (st->size == 3)
 		st->buf = pf_uitoa(va_arg(st->ap, unsigned long int), st, base);
 	else if (st->size == 4)
@@ -123,17 +123,17 @@ void		cr_unsigned(t_printf *st)
 void		cr_int(t_printf *st)
 {
 	if (st->size == 1)
-		st->buf = pf_itoa(va_arg(st->ap, int), st);
+		st->buf = pf_itoa((signed char)va_arg(st->ap, int), st);
 	else if (st->size == 2)
-		st->buf = pf_itoa(va_arg(st->ap, int), st);
+		st->buf = pf_itoa((short int)va_arg(st->ap, int), st);
 	else if (st->size == 3)
 		st->buf = pf_itoa(va_arg(st->ap, long int), st);
 	else if (st->size == 4)
 		st->buf = pf_itoa(va_arg(st->ap, long long int), st);
 	else
 		st->buf = pf_itoa(va_arg(st->ap, int), st);
-	st->plus_sign = (st->buf[0] == '-') ? 0 : st->plus_sign;
-	
+	if (st->buf)
+		st->plus_sign = (st->buf[0] == '-') ? 0 : st->plus_sign;
 	cr_output(st);
 }
 
@@ -144,21 +144,33 @@ void			cr_output(t_printf *st)
 	
 	sp = 0;
 	zero = 0;
-	if (st->space_sign && !st->plus_sign)
+	if (st->space_sign && !st->plus_sign && ft_atoi(st->buf) > 0)
 		sp = 1;
 	if (st->width > st->buf_len)
 			sp = st->width - st->buf_len;
 	if (st->fill_zero && st->precision < 0 && !st->l_align)
-		{
 			zero = sp;
-			
-			}
 	if (st->plus_sign && (*st->source == 'd' || *st->source == 'i'))
 	{
 		sp = (sp > 0) ? sp - 1 : 0;
 		zero = (zero > 0) ? zero - 1 : 0;
 	}
-
+	if (st->prefix)
+	{
+		if (st->width > st->buf_len)
+			st->t_len += (*st->source == 'o') ? st->width - 1: st->width - 2;
+		else if (!(st->width > st->buf_len) && st->width != 0)
+			st->t_len += (*st->source == 'o') ? st->buf_len - 1: st->buf_len - 2;
+		else if (!(st->width > st->buf_len) && st->width == 0)
+			st->t_len += st->buf_len;
+	}
+	else
+	{
+		if (st->width > st->buf_len)
+			st->t_len += st->width;
+		else
+			st->t_len += st->buf_len;
+	}
 	print_str(st, sp, zero);
 }
 
@@ -166,41 +178,50 @@ void			print_str(t_printf *st, int sp, int zero)
 {
 	if (st->plus_sign && (*st->source == 'd' || *st->source == 'i'))
 	{
-		if (zero > 0)
-		{
-			write(1, "+", 1);
-			print_cycle(sp, zero, '0');
-		}
-		else
+		if (!st->l_align && zero <= 0)
 		{
 			print_cycle(sp, zero, ' ');
 			write(1, "+", 1);
 		}
-		ft_putstr(st->buf);
+		else if (zero >= 0 || st->l_align)
+		{
+			write(1, "+", 1);
+			print_cycle(sp, zero - 1, '0');
+		}
+		st->t_len += (st->plus_sign && !st->width) ? 1 : 0;
+		ft_putstr(st->buf, st->buf_len);
+		if (st->width > st->buf_len && st->l_align)
+			print_cycle(st->width - st->buf_len - 1, zero, ' ');
 	}
 	else if (st->l_align && !st->prefix)
 	{
 		if (st->space_sign)
-			write(1," ",1);
-		ft_putstr(st->buf);
+			{	
+				st->t_len += (!st->width) ? 1 : 0;
+				write(1," ",1);
+			}
+		ft_putstr(st->buf, st->buf_len);
 		print_cycle(sp, zero, ' ');
 	}
 	else if (!st->prefix)
 	{
 		if (sp == 1)
-			write(1, " ", 1);
+			{
+				write(1, " ", 1);
+				st->t_len += (!st->width) ? 1 : 0;
+			}
 		else if (zero > 0)
 			print_cycle(sp, zero, '0');
 		else if (sp > 0)
 			print_cycle(sp, zero, ' ');
-		ft_putstr(st->buf);
+		ft_putstr(st->buf, st->buf_len);
 	}
 	else
 	{
 		if (st->l_align)
 		{
 			sp = form_pref(st, sp);
-			ft_putstr(st->buf);
+			ft_putstr(st->buf, st->buf_len);
 			print_cycle(sp, zero, ' ');
 		}
 		else
@@ -218,7 +239,7 @@ void			print_str(t_printf *st, int sp, int zero)
 					print_cycle(sp - 2, zero, ' ');
 				form_pref(st, sp);
 			}
-			ft_putstr(st->buf);
+			ft_putstr(st->buf, st->buf_len);
 		}
 	}
 }
@@ -248,16 +269,19 @@ int				form_pref(t_printf *st, int sp)
 	if (*st->source == 'o')
 		{
 			write(1, "0", 1);
+			st->t_len++;
 			sp--;
 		}
 	if (*st->source == 'x')
 		{
 			write(1, "0x", 2);
+			st->t_len += 2;
 			sp -= 2;
 		}
 	if (*st->source == 'X')
 		{
 			write(1, "0X", 2);
+			st->t_len += 2;
 			sp -= 2;
 		}
 	return (sp);

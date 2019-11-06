@@ -16,7 +16,6 @@ typedef struct  s_printf
 	char 		*source;
 	char		*buf;
 	int			buf_len;
-	char		*out;
 	
 	int			prefix;
 	int			fill_zero;
@@ -41,7 +40,7 @@ void			reset_st(t_printf *st);
 
 char			*pf_itoa(intmax_t n, t_printf *st);
 char			*pf_uitoa(uintmax_t n, t_printf *st, int base);
-void			ft_putstr(char *s);
+void			ft_putstr(char *s, size_t len);
 void			cr_output(t_printf *st);
 void			print_str(t_printf *st, int sp, int zero);
 void			print_cycle(int sp, int zero, char c);
@@ -52,13 +51,13 @@ void			*ft_memset(void *s, int c, size_t n);
 size_t			ft_strlen(const char *str);
 char			*ft_strjoin(char const *s1, char const *s2);
 void			handle_double(t_printf *st);
-intmax_t		doub_to_int(long double num, int presicion);
+char			*doub_to_int(long double num, int presicion, char *post_dot);
 char			*pf_ditoa(long double num, t_printf *st);
 void			ft_bzero(void *s, size_t n);
 char			*ft_strnew(size_t size);
 int				ft_strncmp(char *s1, char *s2, size_t n);
 int				form_pref(t_printf *st, int sp);
-void            handle_sym(t_printf *st);
+char           	*handle_sym(t_printf *st);
 char            *ft_strcpy(char *dest, const char *src);
 char			*ft_uitoa(uintmax_t n, int len, int base, t_printf *st);
 char			*ft_itoa(intmax_t n, int len);

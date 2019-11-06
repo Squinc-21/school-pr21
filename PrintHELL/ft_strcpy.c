@@ -3,18 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strcpy.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lsedgeki <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: squinc <squinc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/08 21:54:45 by lsedgeki          #+#    #+#             */
-/*   Updated: 2019/07/09 15:40:06 by lsedgeki         ###   ########.fr       */
+/*   Updated: 2019/11/06 17:43:00 by squinc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "ft_printf.h"
+
 char	*ft_strcpy(char *dest, const char *src)
 {
-	int i;
+	int	i;
 
 	i = 0;
+	if (dest == NULL || src == NULL)
+		return (NULL);
 	while (src[i])
 	{
 		dest[i] = src[i];
