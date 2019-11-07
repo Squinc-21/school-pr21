@@ -6,7 +6,7 @@
 /*   By: squinc <squinc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 17:07:45 by squinc            #+#    #+#             */
-/*   Updated: 2019/11/06 17:37:15 by squinc           ###   ########.fr       */
+/*   Updated: 2019/11/07 18:19:47 by squinc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,11 +92,11 @@ void		define_conv(t_printf *st)
 	if (*st->source == 'd' || *st->source == 'i')
 		cr_int(st);
 	if (*st->source == 'u'|| *st->source == 'o' || 
-		*st->source == 'x' || *st->source == 'X')
+		*st->source == 'x' || *st->source == 'X' || *st->source == 'p')
 		cr_unsigned(st);
 	if (*st->source == 'f' || *st->source == 'F')
 		handle_double(st);
-	if (*st->source == 'c' || *st->source == 's' || *st->source == 'p')
+	if (*st->source == 'c' || *st->source == 's')
     	handle_sym(st);
 }
 
@@ -104,7 +104,12 @@ void		cr_unsigned(t_printf *st)
 {
 	int base;
 	
-	base = (*st->source == 'x' || *st->source == 'X') ? 16 : 0;
+	if (*st->source == 'p')
+	{
+		st->size = 4;
+		st->prefix = 1;	
+	}
+	base = (*st->source == 'x' || *st->source == 'X' || *st->source == 'p') ? 16 : 0;
 	base = (*st->source == 'o') ? 8 : base;
 	base = (*st->source == 'u') ? 10 : base;
 	if (st->size == 1)
@@ -144,7 +149,7 @@ void			cr_output(t_printf *st)
 	
 	sp = 0;
 	zero = 0;
-	if (st->space_sign && !st->plus_sign && ft_atoi(st->buf) > 0)
+	if (st->space_sign && !st->plus_sign && ft_atoi(st->buf) >= 0)
 		sp = 1;
 	if (st->width > st->buf_len)
 			sp = st->width - st->buf_len;
@@ -196,24 +201,25 @@ void			print_str(t_printf *st, int sp, int zero)
 	else if (st->l_align && !st->prefix)
 	{
 		if (st->space_sign)
-			{	
+			{
 				st->t_len += (!st->width) ? 1 : 0;
 				write(1," ",1);
+				sp--;
 			}
 		ft_putstr(st->buf, st->buf_len);
 		print_cycle(sp, zero, ' ');
 	}
 	else if (!st->prefix)
 	{
-		if (sp == 1)
+		if (sp == 0 && st->space_sign)
 			{
 				write(1, " ", 1);
 				st->t_len += (!st->width) ? 1 : 0;
 			}
-		else if (zero > 0)
-			print_cycle(sp, zero, '0');
 		else if (sp > 0)
 			print_cycle(sp, zero, ' ');
+		else if (zero > 0)
+			print_cycle(sp, zero, '0');
 		ft_putstr(st->buf, st->buf_len);
 	}
 	else
@@ -226,7 +232,7 @@ void			print_str(t_printf *st, int sp, int zero)
 		}
 		else
 		{
-			if (st->fill_zero)
+			if (st->fill_zero && st->buf_len + 1 < st->precision)
 			{
 				zero = form_pref(st, zero);
 				print_cycle(sp , zero , '0');
@@ -239,7 +245,8 @@ void			print_str(t_printf *st, int sp, int zero)
 					print_cycle(sp - 2, zero, ' ');
 				form_pref(st, sp);
 			}
-			ft_putstr(st->buf, st->buf_len);
+			if (!(*st->source == 'p' && st->precision == 0))
+				ft_putstr(st->buf, st->buf_len);
 		}
 	}
 }
@@ -272,7 +279,7 @@ int				form_pref(t_printf *st, int sp)
 			st->t_len++;
 			sp--;
 		}
-	if (*st->source == 'x')
+	if (*st->source == 'x' || *st->source == 'p')
 		{
 			write(1, "0x", 2);
 			st->t_len += 2;
