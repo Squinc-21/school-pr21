@@ -6,7 +6,7 @@
 /*   By: squinc <squinc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/10 18:49:51 by squinc            #+#    #+#             */
-/*   Updated: 2019/11/07 19:04:19 by squinc           ###   ########.fr       */
+/*   Updated: 2019/11/11 20:09:11 by squinc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,26 +43,25 @@ static int	len_uw(uintmax_t n, int base)
 	return (len);
 }
 
-char				*ft_itoa(intmax_t n, int len)
+char				*ft_itoa(intmax_t n, int len, t_printf *st)
 {
-	char	*c;
 	int		sign;
 
 	sign = (n < 0) ? 1 : 0;
-	c = (char*)malloc(sizeof(char) * len + 1);
-	if (c == NULL)
+	st->buf = (char*)malloc(sizeof(char) * len + 1);
+	if (st->buf == NULL)
 		return (NULL);
-	c[len] = '\0';
+	st->buf[len] = '\0';
 	--len;
 	while (len >= 0)
 	{
-		c[len] = '0' + ft_abs(n % 10);
+		st->buf[len] = '0' + ft_abs(n % 10);
 		n = ft_abs(n / 10);
 		--len;
 	}
 	if (sign == 1)
-		c[0] = '-';
-	return (c);
+		st->buf[0] = '-';
+	return (st->buf);
 }
 
 char		*ft_uitoa(uintmax_t n, int len, int base, t_printf *st)
@@ -117,7 +116,7 @@ char		*pf_itoa(intmax_t n, t_printf *st)
 	len += (n < 0 && len == st->precision) ? 1 : 0;
 	st->space_sign = (n < 0) ? 0 : st->space_sign;
 	st->buf_len = len;
-	return (ft_itoa(n, len));
+	return (ft_itoa(n, len, st));
 }
 
 char		*pf_uitoa(uintmax_t n, t_printf *st, int base)
@@ -142,13 +141,14 @@ char		*pf_uitoa(uintmax_t n, t_printf *st, int base)
 		else
 			len = len_uw(n, base);
 	}
+	else if (len >= st->width)
+		st->width = len;
 	st->buf_len = len;
 	if (st->prefix)
 	{
-		if (*st->source == 'o' && (len < st->precision \
-			|| len != st->precision) && len != len_uw(n, base))
+		if (*st->source == 'o' && st->precision >= 0 && len_uw(n, base) < st->precision && n > 0)
 			len--;
-		else if (n > 0 && len <= st->width && (len < st->precision \
+		else if (!(*st->source == 'o') && n > 0 && len <= st->width && (len < st->precision \
 			|| len != st->precision) && len != len_uw(n, base))
 			len -= 2;
 		st->buf_len = len;

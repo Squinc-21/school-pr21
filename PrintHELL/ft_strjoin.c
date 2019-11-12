@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strjoin.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lsedgeki <lsedgeki@student.42.fr>          +#+  +:+       +#+        */
+/*   By: squinc <squinc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/10 11:33:26 by lsedgeki          #+#    #+#             */
-/*   Updated: 2019/11/03 17:02:10 by lsedgeki         ###   ########.fr       */
+/*   Updated: 2019/11/11 21:55:56 by squinc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-char	*ft_strjoin(char const *s1, char const *s2)
+char	*ft_stj(char const *s1, char const *s2)
 {
 	char	*out;
 	int		i;
