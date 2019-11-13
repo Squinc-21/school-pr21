@@ -6,7 +6,7 @@
 /*   By: squinc <squinc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/03 13:15:26 by lsedgeki          #+#    #+#             */
-/*   Updated: 2019/11/11 22:22:02 by squinc           ###   ########.fr       */
+/*   Updated: 2019/11/13 19:01:58 by squinc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,76 +63,44 @@ void		make_correct_output_d(long double num, t_printf *st)
 	cr_output(st);
 }
 
-static int	len_w(intmax_t n)
+char        *doub_to_int(long double num, int presicion, t_printf *st)
 {
-	int	len;
-
-	len = (n <= 0) ? 1 : 0;
-	while (n != 0)
-	{
-		n /= 10;
-		++len;
-	}
-	return (len);
-}
-
-char		*doub_to_int(long double num, int presicion, t_printf *st, char *post)
-{
-	int		i;
-	char	*out;
-	char	*itoa;
-
-	i = 0;
-	out = (char *)malloc(sizeof(char) * 1);
-	itoa = "";
-	while (i < presicion && (int)num == 0)
-	{
-		num = num * 10;
-		out = ft_stj(out, "0");
-		i++;
-		if (num - (intmax_t)num >= 0.5)
-			break ;
-	}
-	if (i == presicion)
-	{
-		post = ft_strcpy(post, out);
-		if (out)
-			free(out);
-		return (post);
-	}
-	while (i < presicion - 1)
-	{
-		num = num * 10;
-		i++;
-	}
-	if (num - (intmax_t)num > 0.5)
-	{
-		itoa = ft_itoa((intmax_t)num + 1, len_w((intmax_t)num + 1), st);
-		out = ft_stj(out, itoa);
-	}
-	else if ((intmax_t)num > 0 && i < presicion)
-	{
-		itoa = ft_itoa((intmax_t)num, len_w((intmax_t)num), st);
-		out = ft_stj(out, itoa);
-	}
-	post = ft_strcpy(post, out);
-	free(out);
-	free(itoa);
-	return (post);
+    int	i;
+	
+    i = 0;
+    while (i < presicion && (int)num == 0)
+    {
+        num = num * 10;
+        i++;
+        if (num - (intmax_t)num >= 0.5)
+            break ;
+    }
+    if (i == presicion)
+        return (ft_itoa(0, i, st));
+    while (i < presicion - 1)
+    {
+        num = num * 10;
+        i++;
+    }
+    if (num - (intmax_t)num > 0.5)
+        return (pf_uitoa((intmax_t)num + 1, st, 10));
+    else if ((intmax_t)num > 0 && i < presicion)
+        return (pf_uitoa((intmax_t)num, st, 10));
+    return (NULL);
 }
 
 void pf_ditoa(long double num, t_printf *st)
 {
 	char		*pre_dot;
 	char		*post_dot;
-	intmax_t	a;
+	long double		help;
+	intmax_t		a;
 
 	a = (intmax_t)num;
-	post_dot = (char *)malloc(sizeof(char) * 1);
 	if (st->precision == -1)
 		st->precision = 6;
-	post_dot = (num < 0) ? doub_to_int((-10) * (num - a), st->precision, st, post_dot)
-		: doub_to_int(10 * (num - a), st->precision, st, post_dot);
+	help = (num < 0) ?	(-10) * (num - a) : 10 * (num - a);
+	post_dot = doub_to_int(help, st->precision, st);
 	if ((int)ft_strlen(post_dot) > st->precision)
 	{
 		post_dot = ft_itoa(0, st->precision, st);
@@ -145,36 +113,54 @@ void pf_ditoa(long double num, t_printf *st)
 	else
 		pre_dot = ft_itoa(ABS(a), len_w(ABS(a)), st);
 	concatenate(pre_dot, post_dot, st);
-	free(post_dot);
+	if(post_dot != NULL)
+		free(post_dot);
 	free(pre_dot);
 }
 
 void concatenate(char *pre_dot, char *post_dot, t_printf *st)
 {
-	char *pe_d;
-	char *po_d;
-	
-	st->buf = (char *)malloc(sizeof(char) * 1);
-	pe_d = (char *)malloc(sizeof(char) * 1);
-	po_d = (char *)malloc(sizeof(char) * 1);
-	if (st->precision != 0)
-	{
-		po_d = ft_stj(".", post_dot);
-		pe_d = ft_stj(pre_dot, po_d);
-		st->buf = ft_strcpy(st->buf, pe_d);
-		free(pe_d);
-		free(po_d);
-		return ;
-	}
-	if (st->prefix != 0)
-	{
-		pe_d = ft_stj(pre_dot, ".");
-		st->buf = ft_strcpy(st->buf, pe_d);
-		free(pe_d);
-		free(po_d);
-		return ;
-	}
-	st->buf = ft_strcpy(st->buf, pre_dot);
-	free(pe_d);
-	free(po_d);
+    char *all;
+    int pu_pa;
+    int lu_pa;
+    int i;
+    
+    lu_pa = ft_strlen(pre_dot);
+    pu_pa = ft_strlen(post_dot);
+    i = 0;
+    st->buf = (char *)malloc(sizeof(char) * (lu_pa + pu_pa + 2));
+    all = (char *)malloc(sizeof(char) * (lu_pa + pu_pa + 2));
+    if (st->precision != 0)
+    {
+        while (i < lu_pa && pre_dot[i])
+        {
+            all[i] = pre_dot[i];
+            i++;
+        }
+        all[i] = '.';
+        i = 0;
+        while (i < pu_pa && post_dot[i])
+        {
+            all[i + lu_pa + 1] = post_dot[i];
+            i++;
+        }
+        all[i + lu_pa + 1] = '\0';    
+        st->buf = ft_strcpy(st->buf, all);
+        free(all);
+        return ;
+    }
+    if (st->prefix != 0)
+    {
+        while (i < lu_pa)
+        {
+            all[i] = pre_dot[i];
+            i++;
+        }
+        all[i] = '.';
+        st->buf = ft_strcpy(st->buf, all);
+        free(all);
+        return ;
+    }
+    st->buf = ft_strcpy(st->buf, pre_dot);
+    free(all);
 }

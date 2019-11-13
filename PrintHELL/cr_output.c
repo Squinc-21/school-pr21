@@ -6,7 +6,7 @@
 /*   By: squinc <squinc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/09 17:40:17 by lsedgeki          #+#    #+#             */
-/*   Updated: 2019/11/11 19:31:39 by squinc           ###   ########.fr       */
+/*   Updated: 2019/11/13 18:17:41 by squinc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,6 @@ void	flags_for_output(int sp, int zero, t_printf *st)
 			st->t_len += st->buf_len;
 	}
 	print_str(st, sp, zero);
-	if (st->buf != NULL && *st->source != 's' && *st->source != 'c')
+	if (st->buf != NULL && *st->source != 's')
 		free(st->buf);
 }

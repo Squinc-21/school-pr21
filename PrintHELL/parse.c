@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lsedgeki <lsedgeki@student.42.fr>          +#+  +:+       +#+        */
+/*   By: squinc <squinc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 17:07:45 by squinc            #+#    #+#             */
-/*   Updated: 2019/11/09 19:17:13 by lsedgeki         ###   ########.fr       */
+/*   Updated: 2019/11/12 20:10:39 by squinc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,8 @@ void		define_conv(t_printf *st)
 	if (*st->source == 'd' || *st->source == 'i')
 		cr_int(st);
 	if (*st->source == 'u' || *st->source == 'o'
-			|| *st->source == 'x' || *st->source == 'X' || *st->source == 'p')
+			|| *st->source == 'x' || *st->source == 'X'
+			|| *st->source == 'p' || *st->source == 'b')
 		cr_unsigned(st);
 	if (*st->source == 'f' || *st->source == 'F')
 		handle_double(st);
@@ -37,6 +38,7 @@ void		cr_unsigned(t_printf *st)
 	base = (*st->source == 'x' || *st->source == 'X'
 			|| *st->source == 'p') ? 16 : 0;
 	base = (*st->source == 'o') ? 8 : base;
+	base = (*st->source == 'b') ? 2 : base;
 	base = (*st->source == 'u') ? 10 : base;
 	if (st->size == 1)
 		st->buf =

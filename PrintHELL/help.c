@@ -6,7 +6,7 @@
 /*   By: squinc <squinc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/28 21:44:59 by squinc            #+#    #+#             */
-/*   Updated: 2019/11/04 22:32:02 by squinc           ###   ########.fr       */
+/*   Updated: 2019/11/12 19:54:01 by squinc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 void reset_st(t_printf *st)
 {
-	//free(st->buf);
 	st->fill_zero = 0;
 	st->prefix = 0;
 	st->width = 0;
@@ -22,7 +21,7 @@ void reset_st(t_printf *st)
 	st->plus_sign = 0;
 	st->space_sign = 0;
 	st->size = 0;
-	st->precision = -1; //important
+	st->precision = -1;
 }
 
 int is_digit(char c)
@@ -50,6 +49,7 @@ int is_conv(char c)
             c == 'c' ||
             c == 's' ||
             c == 'p' ||
+			c == 'b' ||
             c == 'f');
 }
 

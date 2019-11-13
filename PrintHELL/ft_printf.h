@@ -6,7 +6,7 @@
 /*   By: squinc <squinc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/09 17:48:59 by lsedgeki          #+#    #+#             */
-/*   Updated: 2019/11/11 21:54:46 by squinc           ###   ########.fr       */
+/*   Updated: 2019/11/13 17:36:09 by squinc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 
 # include <stdarg.h>
 # include <stdlib.h>
+# include <stdio.h> ///////ekkrfjfjkfkffkf
 # include <unistd.h>
 # include <stdint.h>
 
@@ -36,6 +37,12 @@ typedef struct	s_printf
 	int			width;
 	int			size;
 }				t_printf;
+
+typedef struct	s_color
+{
+	char		*name;
+	char		*format;
+}				t_color;
 
 int				ft_printf(const char *format, ...);
 void			ft_parse(t_printf *st);
@@ -61,6 +68,11 @@ void			non_prefix(int sp, int zero, t_printf *st);
 void			left_align(int sp, int zero, t_printf *st);
 void			print_cycle(int sp, int zero, char c);
 void			define_conv(t_printf *st);
+int				handle_len(t_printf *st, intmax_t n, int len);
+int				handle_ulen(t_printf *st, uintmax_t n, int len, int base);
+int				len_uw(uintmax_t n, int base);
+int				len_w(intmax_t n);
+long long int	ft_abs(intmax_t n);
 
 void			*ft_memalloc(size_t size);
 void			*ft_memset(void *s, int c, size_t n);
@@ -68,7 +80,7 @@ size_t			ft_strlen(const char *str);
 char			*ft_stj(char const *s1, char const *s2);
 void			handle_double(t_printf *st);
 void			make_correct_output_d(long double num, t_printf *st);
-char			*doub_to_int(long double num, int presicion, t_printf *st, char *post);
+char			*doub_to_int(long double num, int presicion, t_printf *st);
 void			concatenate(char *pre_dot, char *post_dot, t_printf *st);
 void			pf_ditoa(long double num, t_printf *st);
 void			ft_bzero(void *s, size_t n);
@@ -76,8 +88,8 @@ char			*ft_strnew(size_t size);
 int				ft_strncmp(char *s1, char *s2, size_t n);
 int				form_pref(t_printf *st, int sp);
 char			*handle_sym(t_printf *st);
-void			make_correct_output_s(t_printf *st, int flag);
-char			*ft_strcpy(char *dest, const char *src);
+void			make_correct_output_s(t_printf *st);
+char			*ft_strcpy(char *dest, char *src);
 char			*ft_uitoa(uintmax_t n, int len, int base, t_printf *st);
 char			*ft_itoa(intmax_t n, int len, t_printf *st);
 char			*ft_strncpy(char *dest, const char *src, size_t n);
