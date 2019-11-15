@@ -6,17 +6,17 @@
 /*   By: squinc <squinc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/09 17:48:59 by lsedgeki          #+#    #+#             */
-/*   Updated: 2019/11/13 17:36:09 by squinc           ###   ########.fr       */
+/*   Updated: 2019/11/14 14:38:45 by squinc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FT_PRINTF_H
 # define FT_PRINTF_H
 # define ABS(Value) (Value < 0) ? (-1)*Value : Value
+# define USI unsigned short int
 
 # include <stdarg.h>
 # include <stdlib.h>
-# include <stdio.h> ///////ekkrfjfjkfkffkf
 # include <unistd.h>
 # include <stdint.h>
 
@@ -45,6 +45,7 @@ typedef struct	s_color
 }				t_color;
 
 int				ft_printf(const char *format, ...);
+int				ft_fdprintf(int fd, const char *format, ...);
 void			ft_parse(t_printf *st);
 void			handle_percent(t_printf *st);
 void			handle_presicion(t_printf *st);
@@ -82,6 +83,7 @@ void			handle_double(t_printf *st);
 void			make_correct_output_d(long double num, t_printf *st);
 char			*doub_to_int(long double num, int presicion, t_printf *st);
 void			concatenate(char *pre_dot, char *post_dot, t_printf *st);
+char			*bug(char *pre_dot, char *post_dot, char *all, int pf);
 void			pf_ditoa(long double num, t_printf *st);
 void			ft_bzero(void *s, size_t n);
 char			*ft_strnew(size_t size);
@@ -93,5 +95,6 @@ char			*ft_strcpy(char *dest, char *src);
 char			*ft_uitoa(uintmax_t n, int len, int base, t_printf *st);
 char			*ft_itoa(intmax_t n, int len, t_printf *st);
 char			*ft_strncpy(char *dest, const char *src, size_t n);
+void			paint(char *to_paint, int len);
 
 #endif

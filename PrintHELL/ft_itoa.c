@@ -6,7 +6,7 @@
 /*   By: squinc <squinc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/10 18:49:51 by squinc            #+#    #+#             */
-/*   Updated: 2019/11/13 17:33:00 by squinc           ###   ########.fr       */
+/*   Updated: 2019/11/13 19:35:46 by lsedgeki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ char				*ft_itoa(intmax_t n, int len, t_printf *st)
 	return (st->buf);
 }
 
-char		*ft_uitoa(uintmax_t n, int len, int base, t_printf *st)
+char				*ft_uitoa(uintmax_t n, int len, int base, t_printf *st)
 {
 	char	*hex;
 	char	*hexb;

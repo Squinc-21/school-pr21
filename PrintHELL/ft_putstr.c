@@ -6,13 +6,13 @@
 /*   By: squinc <squinc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/11 15:58:39 by squinc            #+#    #+#             */
-/*   Updated: 2019/11/06 17:36:03 by squinc           ###   ########.fr       */
+/*   Updated: 2019/11/13 19:39:53 by lsedgeki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-static void ft_putchar(char c)
+static void	ft_putchar(char c)
 {
 	write(1, &c, 1);
 }

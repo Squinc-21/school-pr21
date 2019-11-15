@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   print_str.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lsedgeki <lsedgeki@student.42.fr>          +#+  +:+       +#+        */
+/*   By: squinc <squinc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/09 17:15:01 by lsedgeki          #+#    #+#             */
-/*   Updated: 2019/11/09 18:02:42 by lsedgeki         ###   ########.fr       */
+/*   Updated: 2019/11/14 16:00:57 by squinc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void	print_str(t_printf *st, int sp, int zero)
 	{
 		if (st->space_sign)
 		{
-			st->t_len += (!st->width) ? 1 : 0;
+			st->t_len += (!st->width || st->width == st->buf_len) ? 1 : 0;
 			write(1, " ", 1);
 			sp--;
 		}
@@ -45,7 +45,7 @@ void	plus_d_i(int sp, int zero, t_printf *st)
 		write(1, "+", 1);
 		print_cycle(sp, zero - 1, '0');
 	}
-	st->t_len += (st->plus_sign && !st->width) ? 1 : 0;
+	st->t_len += (st->plus_sign && st->width < st->buf_len) ? 1 : 0;
 	ft_putstr(st->buf, st->buf_len);
 	if (st->width > st->buf_len && st->l_align)
 		print_cycle(st->width - st->buf_len - 1, zero, ' ');
@@ -53,12 +53,15 @@ void	plus_d_i(int sp, int zero, t_printf *st)
 
 void	non_prefix(int sp, int zero, t_printf *st)
 {
-	if (sp == 0 && st->space_sign)
+	if ((sp == 1 || sp == 0) && st->space_sign)
 	{
-		write(1, " ", 1);
-		st->t_len += (!st->width) ? 1 : 0;
+		if (sp || st->space_sign)
+		{
+			write(1, " ", 1);
+			st->t_len += (!st->width || st->width == st->buf_len) ? 1 : 0;
+		}
 	}
-	else if (sp > 0)
+	else if (sp > 0 && !zero)
 		print_cycle(sp, zero, ' ');
 	else if (zero > 0)
 		print_cycle(sp, zero, '0');

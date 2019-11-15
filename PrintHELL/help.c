@@ -6,13 +6,13 @@
 /*   By: squinc <squinc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/28 21:44:59 by squinc            #+#    #+#             */
-/*   Updated: 2019/11/12 19:54:01 by squinc           ###   ########.fr       */
+/*   Updated: 2019/11/13 19:37:34 by lsedgeki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-void reset_st(t_printf *st)
+void	reset_st(t_printf *st)
 {
 	st->fill_zero = 0;
 	st->prefix = 0;
@@ -24,12 +24,12 @@ void reset_st(t_printf *st)
 	st->precision = -1;
 }
 
-int is_digit(char c)
+int		is_digit(char c)
 {
 	return (c >= '0' && c <= '9');
 }
 
-int is_flag(char c)
+int		is_flag(char c)
 {
 	return (c == ' ' ||
 			c == '+' ||
@@ -38,32 +38,32 @@ int is_flag(char c)
 			c == '-');
 }
 
-int is_conv(char c)
+int		is_conv(char c)
 {
 	return (c == 'd' ||
-            c == 'i' ||
-            c == 'o' ||
-            c == 'u' ||
-            c == 'x' ||
-            c == 'X' ||
-            c == 'c' ||
-            c == 's' ||
-            c == 'p' ||
+			c == 'i' ||
+			c == 'o' ||
+			c == 'u' ||
+			c == 'x' ||
+			c == 'X' ||
+			c == 'c' ||
+			c == 's' ||
+			c == 'p' ||
 			c == 'b' ||
-            c == 'f');
+			c == 'f');
 }
 
-int is_len_fl(char *c)
+int		is_len_fl(char *c)
 {
 	if (ft_strncmp(c, "ll", 2) == 0)
 		return (0);
 	if (ft_strncmp(c, "l", 1) == 0)
-		return(0);
+		return (0);
 	if (!ft_strncmp(c, "h", 1))
-		return(0);
+		return (0);
 	if (!ft_strncmp(c, "hh", 2))
-		return(0);
+		return (0);
 	if (!ft_strncmp(c, "L", 1))
-		return(0);
-	return(1);
+		return (0);
+	return (1);
 }

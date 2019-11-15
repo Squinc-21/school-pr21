@@ -6,7 +6,7 @@
 /*   By: squinc <squinc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/09 17:28:27 by lsedgeki          #+#    #+#             */
-/*   Updated: 2019/11/11 21:55:06 by squinc           ###   ########.fr       */
+/*   Updated: 2019/11/14 14:22:11 by squinc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ static void	parse_length_flags(t_printf *st)
 
 void		ft_parse(t_printf *st)
 {
-	while (!is_conv(*st->source))
+	while (*st->source && !is_conv(*st->source))
 	{
 		if (*st->source == '%')
 		{
@@ -92,13 +92,15 @@ void		handle_percent(t_printf *st)
 
 	s = (char *)malloc(sizeof(char) * 1);
 	st->buf = (char *)malloc(sizeof(char) * 1);
-	*st->buf = '%';
+	st->buf[0] = '%';
 	st->space_sign = 0;
 	if (st->fill_zero && st->width != 0 && !st->l_align)
 	{
-		s = ft_memset(s, '0', st->width - 1);
-		st->buf = ft_stj(s, st->buf);
+		s = ft_memset(s, '0', st->width);
+		st->buf = ft_strcpy(st->buf, s);
+		st->buf[st->width - 1] = '%';
 	}
 	st->buf_len = ft_strlen(st->buf);
+	free(s);
 	cr_output(st);
 }

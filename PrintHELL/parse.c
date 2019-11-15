@@ -6,7 +6,7 @@
 /*   By: squinc <squinc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 17:07:45 by squinc            #+#    #+#             */
-/*   Updated: 2019/11/12 20:10:39 by squinc           ###   ########.fr       */
+/*   Updated: 2019/11/14 16:13:39 by squinc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,27 +14,29 @@
 
 void		define_conv(t_printf *st)
 {
-	if (*st->source == 'd' || *st->source == 'i')
-		cr_int(st);
-	if (*st->source == 'u' || *st->source == 'o'
-			|| *st->source == 'x' || *st->source == 'X'
-			|| *st->source == 'p' || *st->source == 'b')
-		cr_unsigned(st);
-	if (*st->source == 'f' || *st->source == 'F')
-		handle_double(st);
-	if (*st->source == 'c' || *st->source == 's')
-		handle_sym(st);
+	if (*st->source)
+	{
+		if (*st->source == 'd' || *st->source == 'i')
+			cr_int(st);
+		if (*st->source == 'u' || *st->source == 'o'
+				|| *st->source == 'x' || *st->source == 'X'
+				|| *st->source == 'p' || *st->source == 'b')
+			cr_unsigned(st);
+		if (*st->source == 'f' || *st->source == 'F')
+			handle_double(st);
+		if (*st->source == 'c' || *st->source == 's')
+			handle_sym(st);
+	}
+	return ;
 }
 
 void		cr_unsigned(t_printf *st)
 {
 	int base;
 
-	if (*st->source == 'p')
-	{
-		st->size = 4;
-		st->prefix = 1;
-	}
+	st->space_sign = 0;
+	st->size = (*st->source == 'p') ? 4 : st->size;
+	st->prefix = (*st->source == 'p') ? 1 : st->prefix;
 	base = (*st->source == 'x' || *st->source == 'X'
 			|| *st->source == 'p') ? 16 : 0;
 	base = (*st->source == 'o') ? 8 : base;
@@ -45,7 +47,7 @@ void		cr_unsigned(t_printf *st)
 			pf_uitoa((unsigned char)va_arg(st->ap, unsigned int), st, base);
 	else if (st->size == 2)
 		st->buf =
-			pf_uitoa((unsigned short int)va_arg(st->ap, unsigned int), st, base);
+			pf_uitoa((USI)va_arg(st->ap, unsigned int), st, base);
 	else if (st->size == 3)
 		st->buf = pf_uitoa(va_arg(st->ap, unsigned long int), st, base);
 	else if (st->size == 4)
@@ -72,7 +74,7 @@ void		cr_int(t_printf *st)
 	cr_output(st);
 }
 
-void			print_cycle(int sp, int zero, char c)
+void		print_cycle(int sp, int zero, char c)
 {
 	if (c == ' ')
 	{
@@ -92,16 +94,18 @@ void			print_cycle(int sp, int zero, char c)
 	}
 }
 
-int				form_pref(t_printf *st, int sp)
+int			form_pref(t_printf *st, int sp)
 {
 	if (*st->source == 'o')
 	{
-        if (!st->width || (st->buf && st->width >= st->buf_len && st->buf[0] != '0') || (st->precision >= st->buf_len))
-        {
-            write(1, "0", 1);
-            st->t_len++;
-        }
-        sp--;
+		if (!st->width ||
+				(st->buf && st->width >= st->buf_len && st->buf[0] != '0') ||
+				(st->precision >= st->buf_len))
+		{
+			write(1, "0", 1);
+			st->t_len++;
+		}
+		sp--;
 	}
 	if (*st->source == 'x' || *st->source == 'p')
 	{
