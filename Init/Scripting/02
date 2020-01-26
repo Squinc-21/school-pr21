@@ -1,0 +1,3 @@
+sudo userdel -r <username>
+#kill -9 <pid> first if user is currently used
+#or use -f

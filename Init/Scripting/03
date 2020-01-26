@@ -1,0 +1,2 @@
+ls -sh $1/* | sort -h
+#displays the list of files from the folder given as param sorted by size

@@ -1,0 +1,1 @@
+systemctl list-units --type service | grep running | awk -F".service" '{print $1}'

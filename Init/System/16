@@ -1,0 +1,2 @@
+#cron   files in /var/spool/cron/tabs
+#crontab -l     schedule
